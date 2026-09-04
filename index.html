@@ -38,6 +38,8 @@ padding:20px 22px;display:flex;flex-direction:column;gap:14px}
 .bdg.yr{background:#FDECD8;color:#9A5B12}
 .clue h2{margin:0;font-size:clamp(20px,2vw,26px);line-height:1.5;font-weight:800}
 
+.clue.solo{justify-content:center}
+.clue.solo .player{margin-top:0}
 .player{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;
 background:#FBF5EA;border:2px solid var(--line);border-radius:18px;padding:18px 16px}
 .play{width:clamp(96px,11vw,132px);height:clamp(96px,11vw,132px);border-radius:50%;border:0;
@@ -55,6 +57,16 @@ transition:transform .1s}
 .pchip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;
 font-size:15px;font-weight:700;cursor:pointer;color:var(--ink)}
 .pchip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.hidden{display:none!important}
+.phold{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:14px;text-align:center;background:#fff;border:3px dashed var(--line);
+border-radius:18px;padding:20px;color:#6B7A80}
+.phold .em{font-size:clamp(38px,4.6vw,62px);line-height:1}
+.phold .t1{font-size:clamp(22px,2.4vw,32px);font-weight:900;color:var(--ink);line-height:1.4}
+.phold .t2{font-size:clamp(15px,1.5vw,19px);line-height:1.6}
+.btn.hint{background:var(--amber);color:#3A2400}
+.btn.shout{background:#1F9D55;margin-top:6px;font-size:clamp(17px,1.8vw,22px);padding:14px 28px}
+.btn.hint[disabled]{background:#EDE3D2;color:#9C9280;cursor:default}
 .banner{position:fixed;top:0;left:0;right:0;z-index:120;background:#B03A28;color:#fff;
 padding:12px 46px 12px 18px;font-size:16px;font-weight:700;line-height:1.5}
 .banner.hidden{display:none}
@@ -174,8 +186,10 @@ td .sbtn{padding:5px 10px;font-size:13px;border-radius:8px}
   </div>
   <div class="gmain">
     <div class="clue">
-      <div class="badges"><span class="bdg cat" id="cbCat"></span><span class="bdg yr" id="cbYr"></span></div>
-      <h2 id="cbHint"></h2>
+      <div id="cbText" class="hidden">
+        <div class="badges"><span class="bdg cat" id="cbCat"></span><span class="bdg yr" id="cbYr"></span></div>
+        <h2 id="cbHint"></h2>
+      </div>
       <div class="player">
         <button class="play" id="play" disabled>▶</button>
         <div class="plabel" id="plabel">載入試聽檔…</div>
@@ -190,8 +204,15 @@ td .sbtn{padding:5px 10px;font-size:13px;border-radius:8px}
       </div>
     </div>
     <div class="gside">
-      <div class="opts" id="opts"></div>
+      <div class="phold" id="phold">
+        <div class="em">🎧</div>
+        <div class="t1">先播前奏<br>讓大家自由喊出歌名</div>
+        <div class="t2">猜不出來，再按下面的「💡 給提示」<br>一次給一點，不要一下子講完</div>
+        <button class="btn shout" id="shout">🙌 有人喊對了！</button>
+      </div>
+      <div class="opts hidden" id="opts"></div>
       <div class="grow">
+        <button class="btn hint" id="hint">💡 給提示</button>
         <button class="btn ghost" id="show">公布答案</button>
         <button class="btn" id="next">下一題 ▶</button>
       </div>
@@ -256,16 +277,19 @@ td .sbtn{padding:5px 10px;font-size:13px;border-radius:8px}
   <div class="note"><b>設備：</b>一台電腦或平板，接投影／電視，音量開到長輩聽得清楚。<b>不用手機、不用另外開 YouTube</b>，按畫面上那顆大橘色按鈕就會出聲。</div>
   <h3>一題的流程（約 3～5 分鐘）</h3>
   <ol>
-    <li>投影出現線索卡：類別、年代、一句背景提示。先讓大家猜猜看。</li>
-    <li>按下大按鈕播前奏（預設只播 15 秒）。畫面上不會出現歌名，長輩看不到答案。</li>
-    <li>猜不出來就按「↻ 再播一次」，或切成「整段 30 秒」多給一點線索。</li>
-    <li>看四個選項，請長輩舉手或直接喊。人多可以分兩組計分。</li>
+    <li><b>先播，不要先講。</b>畫面一開始只有播放鍵，沒有選項也沒有文字線索。按下大按鈕播前奏（預設 15 秒），讓長輩自由喊出歌名——這一步的回憶效果最好。</li>
+    <li>猜不出來就按「↻ 再播一次」，或切成「整段 30 秒」多聽一點。</li>
+    <li>還是想不起來，按「💡 給提示①」出現<b>四個選項</b>，變成四選一。</li>
+    <li>再卡住，按「💡 給提示②」才出現<b>年代和背景文字</b>。一次給一點，不要一下子講完。</li>
+    <li>如果在還沒給選項時就有人喊對，按綠色的「🙌 有人喊對了！」——會記一分，並給一個「只聽前奏就猜到」的徽章。</li>
+    <li>有選項之後，請長輩舉手或直接喊。人多可以分兩組計分。</li>
     <li>按下答案，跳出視窗公布：原唱、年代、三個小知識。</li>
     <li>唸出「💬 一起聊聊」那句，把話丟出去，讓長輩自己接下去講。</li>
     <li>聊得起來就按「▶ 播完整版」放 YouTube 一起唱，聊不起來就下一題。</li>
   </ol>
   <h3>幾個實務提醒</h3>
   <ul>
+    <li><b>提示能不給就不給。</b>只聽前奏就想起來的那種反應，是這個活動最有價值的一刻；一給選項就變成認字遊戲了。答對時如果沒用到文字線索，畫面會給一個小徽章。</li>
     <li><b>不用二十題全跑完。</b>一小時的團體，跑 8～10 題、每題聊透，比趕完二十題有用。</li>
     <li><b>猜完一定要放來唱。</b>猜對的成就感加上一起唱，情緒才會整個起來。</li>
     <li><b>聽力退化的長輩</b>坐前面，音量大但不要爆音，前奏可以多播兩三次。</li>
@@ -277,6 +301,7 @@ td .sbtn{padding:5px 10px;font-size:13px;border-radius:8px}
   <h3>鍵盤操作（拿簡報筆站著帶）</h3>
   <ul>
     <li><b>P</b>：播放／暫停前奏</li>
+    <li><b>H</b>：給下一層提示</li>
     <li><b>1 2 3 4</b>：選答案</li>
     <li><b>Enter / 空白鍵</b>：公布答案，再按一次跳下一題</li>
     <li><b>Esc</b>：關掉彈出視窗</li>
@@ -560,17 +585,18 @@ function renderMatch(){
 }
 
 /* ================= 遊戲 ================= */
-let order=[],idx=-1,cur=null,hit=0,locked=false,finished=false;
+let order=[],idx=-1,cur=null,hit=0,locked=false,finished=false,hintLv=0,clean=0;
 const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
-function start(){ order=shuffle(SONGS.slice()); idx=-1; hit=0; finished=false; nextQ(); }
+function start(){ order=shuffle(SONGS.slice()); idx=-1; hit=0; clean=0; finished=false; nextQ(); }
 function nextQ(){
   closeModal(); stopAudio();
   idx++;
   if(idx>=order.length){ showDone(); return; }
-  cur=order[idx]; locked=false;
+  cur=order[idx]; locked=false; hintLv=0;
   $("#cbCat").textContent=CATS[cur.c];
   $("#cbYr").textContent=cur.y;
   $("#cbHint").textContent=cur.hint;
+  applyHint();
   const ok=hasAudio(cur);
   $("#play").disabled=!ok;
   $("#plabel").textContent=ok?"按一下播前奏":"這首還沒有音檔";
@@ -585,13 +611,34 @@ function nextQ(){
   $("#opts").innerHTML=opts.map(o=>`<button class="opt" data-t="${o.t}">${o.t}</button>`).join("");
   updateBar();
 }
+function applyHint(){
+  $("#cbText").classList.toggle("hidden",hintLv<2);
+  document.querySelector(".clue").classList.toggle("solo",hintLv<2);
+  $("#opts").classList.toggle("hidden",hintLv<1);
+  $("#phold").classList.toggle("hidden",hintLv>=1);
+  const b=$("#hint");
+  if(hintLv===0){ b.disabled=false; b.textContent="💡 給提示①：四個選項"; }
+  else if(hintLv===1){ b.disabled=false; b.textContent="💡 給提示②：文字線索"; }
+  else { b.disabled=true; b.textContent="提示都給完了"; }
+}
+$("#hint").onclick=()=>{ if(locked||hintLv>=2)return; hintLv++; applyHint(); };
+$("#shout").onclick=()=>{                      // 長輩直接喊出答案，不必先看選項
+  if(!cur||locked)return;
+  hit++; clean++;
+  hintLv=2; applyHint();
+  const b=[...$("#opts").children].find(x=>x.dataset.t===cur.t); if(b)b.classList.add("good");
+  updateBar();
+  reveal(true,0);
+};
+
 function updateBar(){
   $("#score").textContent=`第 ${idx+1} / ${order.length} 題 · 答對 ${hit}`;
   $("#bar").style.width=(idx/order.length*100)+"%";
 }
-function reveal(ok){
+function reveal(ok,usedLv){
   locked=true; stopAudio();
-  $("#rres").textContent=ok===true?"✅ 答對了！":(ok===false?"正確答案是":"答案揭曉");
+  const bonus=(ok===true&&usedLv===0)?"　🏅 只聽前奏就猜到！":(ok===true&&usedLv===1)?"　👏 沒看文字線索":"";
+  $("#rres").textContent=(ok===true?"✅ 答對了！":(ok===false?"正確答案是":"答案揭曉"))+bonus;
   $("#rres").className="mres "+(ok===true?"ok":(ok===false?"no":""));
   $("#rname").textContent=cur.t;
   $("#rsub").textContent=`${cur.s} ｜ ${cur.y} ｜ ${CATS[cur.c]}　（試聽版本：${cur.ver}）`;
@@ -628,7 +675,8 @@ function showDone(){
   const msg=pct>=80?"太厲害了，這些歌你都熟。":pct>=50?"不錯喔，一半以上都答對了。":"沒關係，重點是有沒有聊得開心。";
   $("#rres").textContent=""; $("#rres").className="mres";
   $("#rname").textContent="全部完成！"; $("#rsub").textContent="";
-  $("#rfeat").innerHTML=`<div class="done"><div class="big">${hit} / ${order.length}</div><p>${msg}</p></div>`;
+  $("#rfeat").innerHTML=`<div class="done"><div class="big">${hit} / ${order.length}</div>
+    <p>${msg}</p><p style="font-size:17px;color:#6B7A80">其中 ${clean} 題沒看文字線索就猜到</p></div>`;
   $("#rq").textContent="今天這些歌裡面，哪一首最讓你想起以前的事？";
   document.querySelector(".talk b").style.display="";
   $("#rsearch").innerHTML=""; $("#mnext").textContent="再玩一次 ↺";
@@ -637,14 +685,18 @@ function showDone(){
 $("#opts").onclick=e=>{
   const b=e.target.closest(".opt"); if(!b||locked||!cur)return;
   const good=b.dataset.t===cur.t;
-  if(good){hit++;b.classList.add("good");}
+  const usedLv=hintLv;
+  if(good){ hit++; if(usedLv<=1)clean++; b.classList.add("good"); }
   else{ b.classList.add("bad");
     [...$("#opts").children].find(x=>x.dataset.t===cur.t).classList.add("good"); }
+  hintLv=2; applyHint();
   updateBar();
-  setTimeout(()=>reveal(good),420);
+  setTimeout(()=>reveal(good,usedLv),420);
 };
 $("#show").onclick=()=>{ if(!cur||locked)return;
-  [...$("#opts").children].find(x=>x.dataset.t===cur.t).classList.add("good"); reveal(null); };
+  const usedLv=hintLv; hintLv=2; applyHint();
+  const b=[...$("#opts").children].find(x=>x.dataset.t===cur.t); if(b)b.classList.add("good");
+  reveal(null,usedLv); };
 $("#next").onclick=()=>{ finished?start():nextQ(); };
 $("#mnext").onclick=()=>{ finished?start():nextQ(); };
 $("#mclose").onclick=closeModal;
@@ -660,11 +712,12 @@ document.addEventListener("keydown",e=>{
   const k=(e.key||"").toLowerCase();
   if(e.key==="Escape"&&modalOpen()){closeModal();return;}
   if(k==="p"&&!modalOpen()){e.preventDefault(); if(cur)playSong(cur,true); return;}
+  if(k==="h"&&!modalOpen()){e.preventDefault(); $("#hint").click(); return;}
   if(e.key==="Enter"||e.key===" "){e.preventDefault();
     if(modalOpen()&&$("#mnext").style.display==="none"){closeModal();return;}
     if(finished){start();return;}
     locked?nextQ():$("#show").click(); return;}
-  if(["1","2","3","4"].includes(e.key)&&!modalOpen()){
+  if(["1","2","3","4"].includes(e.key)&&!modalOpen()&&hintLv>=1){
     const b=$("#opts").children[+e.key-1]; if(b)b.click(); }
 });
 
